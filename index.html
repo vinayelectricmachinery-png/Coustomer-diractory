@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>विनय इलेक्ट्रिक मशीनरी</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand"><div class="logo">वि</div><div><h1>विनय इलेक्ट्रिक मशीनरी</h1><div class="sub" id="today"></div></div></div>
+    <button class="icon" type="button" onclick="document.getElementById('q').focus()">⌕</button>
+  </div>
+
+  <div class="hero"><h2>Repair<br>Customer Directory</h2><p>Manage customers, repair jobs &amp; payments.</p><div class="shape"></div></div>
+
+  <div class="shops"><button id="s1" class="shop active" type="button" onclick="setShop('Shop 1')">Shop 1</button><button id="s2" class="shop" type="button" onclick="setShop('Shop 2')">Shop 2</button></div>
+
+  <div class="title"><span id="shopTitle">Shop 1</span> Overview</div>
+  <div class="stats">
+    <div class="stat jobs"><small>TOTAL JOBS</small><strong id="count">0</strong><span>Customer records</span></div>
+    <div class="stat money"><small>TOTAL AMOUNT</small><strong id="total">₹0</strong><span>Saved jobs</span></div>
+  </div>
+
+  <div class="search"><input id="q" type="search" autocomplete="off" placeholder="Search name, address or mobile..." oninput="loadCustomers()"></div>
+  <button class="add" type="button" onclick="openForm()">＋ Add New Customer / Job</button>
+  <div class="status" id="status">Connecting to Supabase...</div>
+  <div class="list" id="list"></div>
+</div>
+
+<div class="nav"><button class="sel" type="button">⌂</button><button type="button" onclick="openForm()">＋</button><button type="button" onclick="document.getElementById('q').focus()">⌕</button><button type="button" onclick="alert('Login can be added after authentication is configured.')">♙</button></div>
+
+<div class="modal" id="modal">
+ <div class="sheet">
+  <h2 id="formTitle">New Customer</h2>
+  <form id="customerForm" onsubmit="saveCustomer(event)">
+   <input type="hidden" id="editId">
+   <div><label for="date">Date</label><input id="date" type="date" required></div>
+   <div><label for="name">Customer Name</label><input id="name" required></div>
+   <div><label for="mobile">Contact Number</label><input id="mobile" type="tel" inputmode="tel"></div>
+   <div><label for="village">Address / Village</label><input id="village" required></div>
+   <div><label for="description">Job Description</label><textarea id="description" required></textarea></div>
+   <div><label for="amount">Amount (₹)</label><input id="amount" required inputmode="decimal"></div>
+   <button class="save" type="submit">SAVE CUSTOMER</button>
+   <button class="cancel" type="button" onclick="closeForm()">CANCEL</button>
+  </form>
+ </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+</body>
+</html>
