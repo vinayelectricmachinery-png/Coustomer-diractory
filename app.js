@@ -1003,4 +1003,227 @@ function createCustomerCard(customer) {
                     </button>
 
                     <button
-             
+                        type="button"
+                        onclick="deleteById('${escapeJS(id)}')"
+                    >
+                        DELETE
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+}
+
+
+// ------------------------------------------------------------
+// 17. EDIT CUSTOMER
+// ------------------------------------------------------------
+
+function editById(id) {
+
+    const item =
+        customerCache.find(
+            customer =>
+                String(customer.id) ===
+                String(id)
+        );
+
+    if (!item) {
+
+        alert(
+            "Customer record not found."
+        );
+
+        return;
+    }
+
+    openForm(item);
+}
+
+
+// ------------------------------------------------------------
+// 18. DELETE CUSTOMER
+// ------------------------------------------------------------
+
+async function deleteById(id) {
+
+    if (!db || !currentUser) {
+
+        alert(
+            "Please login first."
+        );
+
+        return;
+    }
+
+    const item =
+        customerCache.find(
+            customer =>
+                String(customer.id) ===
+                String(id)
+        );
+
+    const name =
+        item?.customer_name ||
+        "this customer";
+
+    const confirmed =
+        confirm(
+            `Delete ${name}?\n\nThis cannot be undone.`
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const {
+            error
+        } =
+            await db
+                .from("customers")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                )
+                .eq(
+                    "user_id",
+                    currentUser.id
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        await loadCustomers();
+
+    } catch (error) {
+
+        console.error(
+            "Delete error:",
+            error
+        );
+
+        alert(
+            "Could not delete customer.\n\n" +
+            error.message
+        );
+    }
+}
+
+
+// ------------------------------------------------------------
+// 19. HTML ESCAPE
+// ------------------------------------------------------------
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function escapeJS(value) {
+
+    return String(value ?? "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, "\\n")
+        .replace(/\r/g, "\\r");
+}
+
+
+// ------------------------------------------------------------
+// 20. MODAL EVENTS
+// ------------------------------------------------------------
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        updateToday();
+
+        const modal =
+            $("modal");
+
+        if (modal) {
+
+            modal.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target ===
+                        modal
+                    ) {
+                        closeForm();
+                    }
+                }
+            );
+        }
+
+        const loginForm =
+            $("loginForm");
+
+        if (loginForm) {
+
+            loginForm.addEventListener(
+                "submit",
+                login
+            );
+        }
+
+        const customerForm =
+            $("customerForm");
+
+        if (customerForm) {
+
+            customerForm.addEventListener(
+                "submit",
+                saveCustomer
+            );
+        }
+
+        const searchInput =
+            $("q");
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                () => {
+                    loadCustomers();
+                }
+            );
+        }
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+                    closeForm();
+                }
+            }
+        );
+
+        // --------------------------------
+        // START AUTHENTICATION
+        // --------------------------------
+
+        initializeAuthentication();
+    }
+);
