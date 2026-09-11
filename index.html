@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>विनय इलेक्ट्रिक मशीनरी</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#ded8f5;font-family:Arial,sans-serif;color:#111}
+.app{max-width:430px;min-height:100vh;margin:auto;background:#f7f7f8;padding:24px 20px 100px}
+.top{display:flex;justify-content:space-between;align-items:center}.brand{display:flex;gap:11px;align-items:center}
+.logo{width:45px;height:45px;border-radius:50%;background:#111;color:white;display:grid;place-items:center;font-weight:800}
+h1{font-size:19px;margin:0}.sub{color:#777;font-size:12px;margin-top:3px}
+.icon{border:1px solid #ddd;background:white;border-radius:50%;width:45px;height:45px;font-size:22px}
+.hero{margin-top:18px;background:#aa91f3;border-radius:24px;padding:21px;min-height:140px;position:relative;overflow:hidden}
+.hero h2{margin:0;font-size:29px;line-height:1.02;max-width:245px}.hero p{font-size:12px;max-width:220px}
+.hero .shape{position:absolute;right:-25px;bottom:-35px;width:120px;height:120px;background:#8b70df;border-radius:35px;transform:rotate(25deg)}
+.hero .shape:after{content:"₹";position:absolute;left:28px;top:25px;background:#ffb62d;border-radius:25px;width:62px;height:62px;display:grid;place-items:center;color:white;font-size:30px;font-weight:bold}
+.shops{display:flex;gap:9px;margin:15px 0}.shop{flex:1;border:1px solid #ddd;background:#fff;border-radius:16px;padding:12px;font-weight:bold}.shop.active{background:#111;color:white}
+.title{font-size:21px;font-weight:800;margin:18px 0 12px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{padding:17px;border-radius:21px;min-height:110px}.jobs{background:#ffc45c}.money{background:#a9cafa}.stat small{font-size:11px}.stat strong{display:block;font-size:25px;margin-top:13px}.stat span{font-size:11px;color:#555}
+.search{margin-top:14px;display:flex;gap:8px}.search input{flex:1;border:1px solid #ddd;border-radius:15px;padding:14px;font-size:14px;outline:none}
+.add{width:100%;margin-top:11px;border:0;border-radius:16px;padding:15px;background:#111;color:white;font-weight:800;font-size:14px}
+.list{display:grid;gap:10px;margin-top:15px}.card{background:white;border-radius:20px;padding:15px;border:1px solid #eee}
+.row{display:flex;justify-content:space-between;gap:10px}.name{font-weight:800;font-size:17px}.amount{font-weight:800}.meta{font-size:12px;color:#777;margin-top:5px}.desc{font-size:14px;margin-top:10px}.time{font-size:10px;color:#aaa;margin-top:9px}
+.actions{display:flex;gap:7px;margin-top:11px}.actions button{border:1px solid #ddd;background:#fafafa;border-radius:11px;padding:8px 11px}
+.empty{text-align:center;color:#888;padding:30px}
+.nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);width:min(390px,calc(100% - 36px));height:64px;background:#11121b;border-radius:34px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 10px 30px #0003}.nav button{border:0;background:none;color:#aaa;font-size:20px;width:52px;height:52px;border-radius:50%}.nav .sel{background:#fff;color:#111}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:flex-end;justify-content:center;z-index:10}.modal.show{display:flex}.sheet{width:min(430px,100%);background:#fff;border-radius:27px 27px 0 0;padding:21px;max-height:92vh;overflow:auto}.sheet h2{margin:0 0 15px}
+form{display:grid;gap:10px}label{font-size:11px;color:#777}input,textarea{width:100%;padding:13px;border:1px solid #ddd;border-radius:13px;font:inherit}textarea{min-height:75px}.save,.cancel{border:0;border-radius:14px;padding:14px;font-weight:800}.save{background:#111;color:white}.cancel{background:#eee}
+.status{font-size:11px;margin-top:8px;color:#777}
+@media(min-width:600px){body{padding:20px}.app{border-radius:30px;min-height:850px}.nav{position:absolute}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand"><div class="logo">वि</div><div><h1>विनय इलेक्ट्रिक मशीनरी</h1><div class="sub" id="today"></div></div></div>
+    <button class="icon" onclick="document.getElementById('q').focus()">⌕</button>
+  </div>
+
+  <div class="hero"><h2>Repair<br>Customer Directory</h2><p>Manage customers, repair jobs & payments.</p><div class="shape"></div></div>
+
+  <div class="shops"><button id="s1" class="shop active" onclick="setShop('Shop 1')">Shop 1</button><button id="s2" class="shop" onclick="setShop('Shop 2')">Shop 2</button></div>
+
+  <div class="title"><span id="shopTitle">Shop 1</span> Overview</div>
+  <div class="stats">
+    <div class="stat jobs"><small>TOTAL JOBS</small><strong id="count">0</strong><span>Customer records</span></div>
+    <div class="stat money"><small>TOTAL AMOUNT</small><strong id="total">₹0</strong><span>Saved jobs</span></div>
+  </div>
+
+  <div class="search"><input id="q" placeholder="Search name, address or mobile..." oninput="loadCustomers()"></div>
+  <button class="add" onclick="openForm()">＋ Add New Customer / Job</button>
+  <div class="status" id="status">Connecting to Supabase...</div>
+  <div class="list" id="list"></div>
+</div>
+
+<div class="nav"><button class="sel">⌂</button><button onclick="openForm()">＋</button><button onclick="document.getElementById('q').focus()">⌕</button><button onclick="alert('Login can be added after RLS/auth is configured.')">♙</button></div>
+
+<div class="modal" id="modal">
+ <div class="sheet">
+  <h2 id="formTitle">New Customer</h2>
+  <form onsubmit="saveCustomer(event)">
+   <input type="hidden" id="editId">
+   <div><label>Date</label><input id="date" type="date" required></div>
+   <div><label>Customer Name</label><input id="name" required></div>
+   <div><label>Contact Number</label><input id="mobile" type="tel"></div>
+   <div><label>Address / Village</label><input id="village" required></div>
+   <div><label>Job Description</label><textarea id="description" required></textarea></div>
+   <div><label>Amount (₹)</label><input id="amount" required inputmode="decimal"></div>
+   <button class="save">SAVE CUSTOMER</button>
+   <button type="button" class="cancel" onclick="closeForm()">CANCEL</button>
+  </form>
+ </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ==========================================================
+   PUT YOUR SUPABASE VALUES HERE
+   Supabase Dashboard → Project Settings → API
+   Use the Project URL and the anon/public key.
+   NEVER put the service_role key in this HTML.
+   ========================================================== */
+const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+let db = null;
+if(!SUPABASE_URL.startsWith("YOUR_") && !SUPABASE_ANON_KEY.startsWith("YOUR_")){
+  db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+let currentShop="Shop 1";
+const $=id=>document.getElementById(id);
+$("today").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"short",year:"numeric"});
+
+function setShop(shop){
+ currentShop=shop;$("shopTitle").textContent=shop;
+ $("s1").classList.toggle("active",shop==="Shop 1");$("s2").classList.toggle("active",shop==="Shop 2");
+ loadCustomers();
+}
+function openForm(item=null){
+ $("modal").classList.add("show");$("formTitle").textContent=item?"Edit Customer":"New Customer";
+ $("editId").value=item?.id||"";$("date").value=item?.date||new Date().toISOString().slice(0,10);
+ $("name").value=item?.customer_name||"";$("mobile").value=item?.mobile||"";
+ $("village").value=item?.village||"";$("description").value=item?.Description||"";
+ $("amount").value=item?.amount||"";
+}
+function closeForm(){$("modal").classList.remove("show")}
+
+async function saveCustomer(e){
+ e.preventDefault();
+ if(!db){alert("First add your Supabase URL and anon key in this HTML file.");return}
+ const id=$("editId").value;
+ const row={shop:currentShop,customer_name:$("name").value.trim(),village:$("village").value.trim(),mobile:$("mobile").value.trim(),date:$("date").value,Description:$("description").value.trim(),amount:$("amount").value.trim()};
+ $("status").textContent="Saving...";
+ let result;
+ if(id) result=await db.from("customers").update(row).eq("id",id);
+ else result=await db.from("customers").insert(row);
+ if(result.error){console.error(result.error);$("status").textContent="Save failed: "+result.error.message;alert("Could not save. Check Supabase RLS policies.");return}
+ closeForm();$("status").textContent="Saved successfully ✓";loadCustomers();
+}
+
+async function loadCustomers(){
+ if(!db){$("status").textContent="Demo setup: add Supabase URL + anon key to connect.";return}
+ $("status").textContent="Loading...";
+ let query=db.from("customers").select("*").eq("shop",currentShop).order("created_at",{ascending:false});
+ const q=$("q").value.trim();
+ if(q) query=query.or(`customer_name.ilike.%${q}%,village.ilike.%${q}%,mobile.ilike.%${q}%`);
+ const {data,error}=await query;
+ if(error){$("status").textContent="Load failed: "+error.message;return}
+ $("status").textContent=`${data.length} record${data.length===1?"":"s"} found`;
+ $("count").textContent=data.length;
+ $("total").textContent="₹"+data.reduce((sum,x)=>sum+(parseFloat(x.amount)||0),0).toLocaleString("en-IN");
+ $("list").innerHTML=data.length?data.map(x=>`
+ <div class="card">
+  <div class="row"><div><div class="name">${esc(x.customer_name)}</div><div class="meta">📞 ${esc(x.mobile||"—")} · 📍 ${esc(x.village)}</div></div><div class="amount">₹${esc(x.amount||"0")}</div></div>
+  <div class="desc">🔧 ${esc(x.Description)}</div>
+  <div class="meta">📅 ${esc(x.date||"")}</div>
+  <div class="time">Created: ${x.created_at?new Date(x.created_at).toLocaleString("en-IN"):"—"}</div>
+  <div class="actions"><button onclick='editById("${x.id}")'>✏ Edit</button><button onclick='deleteById("${x.id}")'>🗑 Delete</button></div>
+ </div>`).join(""):`<div class="empty">No customers found in ${currentShop}.</div>`;
+ window.customerCache=data;
+}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function editById(id){const x=(window.customerCache||[]).find(a=>a.id===id);if(x)openForm(x)}
+async function deleteById(id){
+ if(!confirm("Delete this customer record?"))return;
+ const {error}=await db.from("customers").delete().eq("id",id);
+ if(error)alert(error.message);else loadCustomers();
+}
+loadCustomers();
+</script>
+</body>
+</html>
