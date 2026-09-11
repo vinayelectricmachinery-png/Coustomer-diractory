@@ -1,1 +1,0 @@
-/* JavaScript is currently embedded in index.html. We will split it in the next step. */
