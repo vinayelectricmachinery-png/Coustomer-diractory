@@ -729,7 +729,7 @@ async function loadCustomers() {
                     currentShop
                 )
                 .order(
-                    "created_at",
+                    "date",
                     {
                         ascending: false
                     }
