@@ -2,7 +2,7 @@
   1) Put your Supabase Project URL and ANON/PUBLISHABLE KEY below.
   2) NEVER put the Supabase service_role/secret key in this file.
 */
-const SUPABASE_URL = "https://rzomjnhypjcpeyxgfwht.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://rzomjnhypjcpeyxgfwht.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_8BOilVZ4Rp_BlSqWqWlcUQ_oF2k-9jV";
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
